@@ -2,16 +2,16 @@
   "name": "http2-server-sent-events-example",
   "version": "1.0.0",
   "description": "",
-  "main": "./index.js",
-  "types": "./index.d.ts",
+  "main": "./src/index.js",
   "scripts": {
-    "start": "node ./index.js"
+    "start": "node ./src/index.js"
   },
+  "type": "module",
   "repository": "github:sergeichikan/http2-server-sent-events-example",
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@types/node": "^14.0.10"
+    "@types/node": "^14.14.10"
   }
 }
