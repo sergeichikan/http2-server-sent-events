@@ -1,9 +1,9 @@
-let eventSource: EventSource | undefined;
-
-const logTextarea = document.getElementById("logTextarea");
+const logTextarea = document.querySelector('textarea[id="logTextarea"]');
 const urlInput = document.querySelector<HTMLInputElement>('input[id="urlInput"]');
+const startButton = document.querySelector<HTMLInputElement>('button[id="startButton"]');
+const stopButton = document.querySelector<HTMLInputElement>('button[id="stopButton"]');
 
-if (!logTextarea || !urlInput) {
+if (!logTextarea || !urlInput || !startButton || !stopButton) {
     throw new Error("elements not found");
 }
 
@@ -11,16 +11,15 @@ const log = (msg: string) => {
     logTextarea.textContent += `${msg}\n`;
 };
 
-const stopSSE = () => {
-    log("stop");
-    eventSource && eventSource.close();
-};
+startButton.addEventListener("click", () => {
+    const { value: url } = urlInput;
 
-const startSSE = (url: string = urlInput.value) => {
+    const eventSource: EventSource = new EventSource(url);
 
-    log(`[start] ${url}`);
-
-    eventSource = new EventSource(url);
+    const stopSSE = () => {
+        log("stop");
+        eventSource.close();
+    };
 
     eventSource.addEventListener("open", ({ target: { readyState } }: Event) => {
         log(`[open] readyState: ${readyState}`);
@@ -39,20 +38,13 @@ const startSSE = (url: string = urlInput.value) => {
                 log("[error] Произошла ошибка.");
                 break;
         }
-        if (readyState === EventSource.CONNECTING) {
-            log(`[error] Переподключение`);
-        } else if (readyState === EventSource.CLOSED) {
-            log("[error] CLOSED");
-        } else {
-            log("[error] Произошла ошибка.");
-        }
     });
 
-    eventSource.addEventListener("end", ({ data, lastEventId }) => {
+    eventSource.addEventListener("end", ({ data, lastEventId }: Event) => {
         log(`[end] id: ${lastEventId}, data: ${data}`);
     });
 
-    eventSource.addEventListener("stop", ({ data, lastEventId }) => {
+    eventSource.addEventListener("stop", ({ data, lastEventId }: Event) => {
         log(`[stop] id: ${lastEventId}, data: ${data}`);
         stopSSE();
     });
@@ -60,4 +52,8 @@ const startSSE = (url: string = urlInput.value) => {
     eventSource.addEventListener("message", ({ data, lastEventId }: MessageEvent<string>) => {
         log(`[message] id: ${lastEventId}, data: ${data}`);
     });
-};
+
+    stopButton.addEventListener("click", stopSSE);
+
+    log(`[start] ${url}`);
+});

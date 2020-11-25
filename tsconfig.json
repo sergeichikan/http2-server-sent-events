@@ -5,6 +5,7 @@
     "declaration": false,
     "declarationMap": false,
     "sourceMap": true,
+    "inlineSourceMap": true,
 
     "moduleResolution": "node",
 

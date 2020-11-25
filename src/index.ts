@@ -23,12 +23,20 @@ const notFound = (stream: ServerHttp2Stream) => {
     stream.end("Page not found");
 };
 
-const sendIndex = (stream: ServerHttp2Stream) => {
+const sendIndexHtml = (stream: ServerHttp2Stream) => {
     stream.respond({
         [HTTP2_HEADER_STATUS]: 200,
         [HTTP2_HEADER_CONTENT_TYPE]: "text/html; charset=utf-8",
     });
     createReadStream("./front/index.html").pipe(stream);
+};
+
+const sendIndexJs = (stream: ServerHttp2Stream) => {
+    stream.respond({
+        [HTTP2_HEADER_STATUS]: 200,
+        [HTTP2_HEADER_CONTENT_TYPE]: "application/javascript; charset=utf-8",
+    });
+    createReadStream("./front/index.js").pipe(stream);
 };
 
 const runSSE = (stream: ServerHttp2Stream) => {
@@ -80,7 +88,9 @@ server.on("stream", (stream: ServerHttp2Stream, headers: IncomingHttpHeaders, fl
     switch (path) {
         case "/":
         case "/index.html":
-            return sendIndex(stream);
+            return sendIndexHtml(stream);
+        case "/index.js":
+            return sendIndexJs(stream);
         case "/sse":
             return runSSE(stream);
         default:
