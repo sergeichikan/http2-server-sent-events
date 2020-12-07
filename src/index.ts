@@ -1,6 +1,7 @@
 import { createSecureServer, ServerHttp2Stream, IncomingHttpHeaders, constants, Http2SecureServer } from "http2";
 import { readFileSync, createReadStream } from "fs";
 import { ListenOptions } from "net";
+import { join } from "path";
 
 const options: ListenOptions = {
     host: "localhost",
@@ -28,7 +29,7 @@ const sendIndexHtml = (stream: ServerHttp2Stream) => {
         [HTTP2_HEADER_STATUS]: 200,
         [HTTP2_HEADER_CONTENT_TYPE]: "text/html; charset=utf-8",
     });
-    createReadStream("./front/index.html").pipe(stream);
+    createReadStream(join("front", "index.html")).pipe(stream);
 };
 
 const sendIndexJs = (stream: ServerHttp2Stream) => {
@@ -36,7 +37,7 @@ const sendIndexJs = (stream: ServerHttp2Stream) => {
         [HTTP2_HEADER_STATUS]: 200,
         [HTTP2_HEADER_CONTENT_TYPE]: "application/javascript; charset=utf-8",
     });
-    createReadStream("./front/index.js").pipe(stream);
+    createReadStream(join("front", "index.js")).pipe(stream);
 };
 
 const runSSE = (stream: ServerHttp2Stream) => {
